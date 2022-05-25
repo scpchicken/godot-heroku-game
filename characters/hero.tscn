@@ -2,7 +2,7 @@
 
 [ext_resource path="res://characters/hero.gd" type="Script" id=1]
 [ext_resource path="res://images/characters/charwalk.png" type="Texture" id=2]
-[ext_resource path="res://characters/BlinkPlayer.tscn" type="PackedScene" id=3]
+
 
 [sub_resource type="CapsuleShape2D" id=1]
 radius = 9.43265
@@ -303,8 +303,8 @@ script = ExtResource( 1 )
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 1.49012e-08, 0 )
 texture = ExtResource( 2 )
-vframes = 4
 hframes = 4
+vframes = 4
 frame = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -357,6 +357,5 @@ autostart = true
 wait_time = 2.0
 autostart = true
 
-[node name="BlinkPlayer" parent="." instance=ExtResource( 3 )]
 [connection signal="timeout" from="attack_timer" to="." method="_on_attack_timer_timeout"]
 [connection signal="timeout" from="bomb_timer" to="." method="_on_bomb_timer_timeout"]
