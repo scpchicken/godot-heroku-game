@@ -1,13 +1,13 @@
 extends KinematicBody2D
 
 var ACCELERATION = 500
-var MAX_SPEED = 120
+var MAX_SPEED = 500
 const FRICTION = 450
 var velocity = Vector2.ZERO
 var win_show = false
 
 
-onready var animationPlayer = $Anim
+#onready var animationPlayer = $Anim
 onready var animTr = $AnimTr
 onready var animState = animTr.get("parameters/playback")
 enum ACT {IDLE, MOVE, ATTACT, STUNNED, HURT, BRUH}
@@ -41,8 +41,8 @@ var qui_Char_In_Focus = false
 var gui_SendChatBt
 
 func _ready():
-	if is_network_master():
-		pass
+#	if is_network_master():
+#		pass
 #		wcl.add_child(_gui)
 #		wcl.add_child(_gui_Btm)
 #		get_node("/root/world/wcl/GUI/HBoxContainer/nameLabel").text = $plName.text
@@ -66,21 +66,21 @@ func _ready():
 
 	$AnimTr.active = true
 
-func char_In_Focus_State(state):
-	qui_Char_In_Focus = state
-	print("qui_Char_In_Focus:",qui_Char_In_Focus)
-master func gui_update(hp):
-	if hp!=null or player_id != 1:
-		#print("HP:",hp)
-		gui_gauge.value = int(hp)
-		gui_hp.text = hp
+#func char_In_Focus_State(state):
+#	qui_Char_In_Focus = state
+#	print("qui_Char_In_Focus:",qui_Char_In_Focus)
+#master func gui_update(hp):
+#	if hp!=null or player_id != 1:
+#		#print("HP:",hp)
+#		gui_gauge.value = int(hp)
+#		gui_hp.text = hp
 
-remotesync func set_bomb(bomb_name, bomb_pos, by_who):
-	#print("bomb_name  %s"%bomb_name,"bomb_pos %s" %bomb_pos,"by_who %s" %by_who)
-	var bomb = load("res://weapon/bomb.tscn").instance()
-	get_node("/root/world").add_child(bomb)
-	bomb.position = bomb_pos
-	bomb.from_player = by_who
+#remotesync func set_bomb(bomb_name, bomb_pos, by_who):
+#	#print("bomb_name  %s"%bomb_name,"bomb_pos %s" %bomb_pos,"by_who %s" %by_who)
+#	var bomb = load("res://weapon/bomb.tscn").instance()
+#	get_node("/root/world").add_child(bomb)
+#	bomb.position = bomb_pos
+#	bomb.from_player = by_who
 	
 remotesync func attack(pos, att_dir, by_who):
 	var weapon = load("res://weapon/pineapple.tscn").instance()
@@ -104,16 +104,19 @@ func _process(delta):
 			ACT.MOVE:
 				move_state(delta)
 			ACT.ATTACT:
-				attack_state(delta)
+				pass
+#				attack_state(delta)
 			ACT.HURT:
-				hurt_state(delta)
+				pass
+#				hurt_state(delta)
 			ACT.STUNNED:
 				state = ACT.BRUH
 				bruh()
 			ACT.BRUH:
 				stunned_state()
 			ACT.IDLE:
-				idle_state(delta)
+				pass
+#				idle_state(delta)
 #	if blinking: 
 #		print("blinking")
 #		get_node("BlinkPlayer").play("StartBlink")
@@ -179,14 +182,14 @@ func move_state(delta):
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
 	velocity = move_and_slide(velocity)
 	
-func idle_state(delta):
-	pass
-func attack_state(delta):
-	pass
+#func idle_state(delta):
+#	pass
+#func attack_state(delta):
+#	pass
 	
-func hurt_state(delta):
-	#print("hurt_state")
-	animState.travel("Hurt")
+#func hurt_state(delta):
+#	#print("hurt_state")
+#	animState.travel("Hurt")
 
 puppet func winguy():
 	get_node("/root/world/winlabel").text = "you win"
@@ -210,34 +213,34 @@ func bruh():
 puppet func stun():
 	state = ACT.STUNNED
 	
-master func exploded(by_who):
-	if state ==  ACT.STUNNED:
-		return
-	rpc("stun")
-	stun()
+#master func exploded(by_who):
+#	if state ==  ACT.STUNNED:
+#		return
+#	rpc("stun")
+#	stun()
 	
 func setPlayerName(newName):
 	$plName.text = newName
 	
-remotesync func update_score(id, score):
-	gamestate.players[id]["score"] += score
-	if gamestate.players[id]["score"] < 0:
-		gamestate.players[id]["score"] = 0
-	if gamestate.players[id]["score"] >=  100:
-		gamestate.players[id]["score"] = 100
-	#gamestate.rpc("update_player_stats",id,gamestate.players[id]["score"])
-	$score.text = str(gamestate.players[id]["score"])
+#remotesync func update_score(id, score):
+#	gamestate.players[id]["score"] += score
+#	if gamestate.players[id]["score"] < 0:
+#		gamestate.players[id]["score"] = 0
+#	if gamestate.players[id]["score"] >=  100:
+#		gamestate.players[id]["score"] = 100
+#	#gamestate.rpc("update_player_stats",id,gamestate.players[id]["score"])
+#	$score.text = str(gamestate.players[id]["score"])
 	#gamestate.callv("update_player_stats",[id,tmpscore])
 	#update local 
 #	rpc("gui_update",$score.text)
 	
 #new user get all exist player score 
-remotesync func set_stats(id, score):
-	#print("id:",id, "  score:",score)
-	$score.text = str(score) 
+#remotesync func set_stats(id, score):
+#	#print("id:",id, "  score:",score)
+#	$score.text = str(score) 
 
-func _on_bomb_timer_timeout():
-	prev_bombing = false
+#func _on_bomb_timer_timeout():
+#	prev_bombing = false
 
 func damage(by_who):
 	if state ==  ACT.STUNNED:
@@ -264,16 +267,16 @@ func damage(by_who):
 func _on_attack_timer_timeout():
 	prev_attacking = false
 	
-remotesync func caught(is_caught):
-	#print("caught:",is_caught)
-	#blinking = is_caught
-	if is_network_master():
-		rpc("update_score",player_id, -2)
-		if is_caught:
-			state = ACT.HURT
-		else:
-			state = ACT.MOVE
-		rset("puppet_state",state)
-	else:
-		state = puppet_state
+#remotesync func caught(is_caught):
+#	#print("caught:",is_caught)
+#	#blinking = is_caught
+#	if is_network_master():
+#		rpc("update_score",player_id, -2)
+#		if is_caught:
+#			state = ACT.HURT
+#		else:
+#			state = ACT.MOVE
+#		rset("puppet_state",state)
+#	else:
+#		state = puppet_state
 

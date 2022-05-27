@@ -15,8 +15,8 @@ var CON2URL = "wss://" + SERVER_IP+ ":" + str("443")+ "/gd/"
 
 var player_stats = {"name":"","score":0}
 var players = {}
-signal refreshList(players)
-signal serverState(player_name)
+#signal refreshList(players)
+#signal serverState(player_name)
 var npcTimer
 var npcTimerVal = 5
 onready var world = load("res://world/world.tscn").instance()
@@ -27,7 +27,7 @@ func _ready():
 		OS.set_window_maximized(true)
 	#TranslationServer.set_locale('zh')
 	randomize()
-	get_tree().connect("network_peer_connected", self, "_player_connected")
+#	get_tree().connect("network_peer_connected", self, "_player_connected")
 	get_tree().connect("network_peer_disconnected", self,"_player_disconnected")
 	get_tree().connect("connected_to_server", self, "_connected_ok")
 	get_tree().connect("connection_failed", self, "_connected_fail")
@@ -37,15 +37,16 @@ func _ready():
 		
 	npcTimer = Timer.new()
 	npcTimer.set_wait_time(npcTimerVal)
-	npcTimer.connect("timeout",self,"_on_timer_timeout")
+#	npcTimer.connect("timeout",self,"_on_timer_timeout")
 	add_child(npcTimer) #to process
 	npcTimer.start() #to start
 
-func _player_connected(id):
-	# Called on both clients and server when a peer connects. Send my info to it.
-	#print("player_connected =",id)
-	#rpc_id(id,"register_player", player_stats)
-	pass
+#func _player_connected(id):
+#	# Called on both clients and server when a peer connects. Send my info to it.
+#	#print("player_connected =",id)
+#	#rpc_id(id,"register_player", player_stats)
+#	pass
+
 remote func register_player(new_id, player_stats):
 	#var new_id = get_tree().get_rpc_sender_id()
 	players[new_id] = player_stats
@@ -59,7 +60,7 @@ remote func register_player(new_id, player_stats):
 				#send new_id to all players except server self
 				if idp != 1:
 					rpc_id(idp,"register_player", new_id, players[new_id])
-	emit_signal("refreshList", players)
+#	emit_signal("refreshList", players)
 	
 func _connected_ok():
 	#Connected to server ok
@@ -89,7 +90,7 @@ func serverStart():
 	print("Listen on SVR_PORT: ",Listen_PORT)
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
 	get_tree().set_network_peer(host)
-	emit_signal("serverState",player_stats)
+#	emit_signal("serverState",player_stats)
 	addWorld()
 	var player_id = get_tree().get_network_unique_id()
 	players[player_id] = player_stats
@@ -105,12 +106,12 @@ func rndSpawn():
 	#print("spawn",spawn)
 	return spawn
 
-func rndVelocity():
-	var dir = randi() % 2
-	if dir == 0:
-		return Vector2(1,0)
-	else:
-		return Vector2(-1,0)
+#func rndVelocity():
+#	var dir = randi() % 2
+#	if dir == 0:
+#		return Vector2(1,0)
+#	else:
+#		return Vector2(-1,0)
 		
 func add_player(id):
 	#if id != 1:
@@ -126,16 +127,16 @@ func add_player(id):
 	#world.get_node("wcl").add_child(player_gui)
 	player.position = rndSpawn()
 	#set exist player state
-	player.rpc("set_stats", id, players[id]["score"])
+#	player.rpc("set_stats", id, players[id]["score"])
 	addWorld()
 	get_node("/root/lobby/CanvasLayer/Loading").visible = false
 	
 	#add npc
-	if get_tree().is_network_server():
-		if get_node("/root/world/npc").get_child_count()>0:
-			for n in get_node("/root/world/npc").get_children():
-				#print("pos %s ;dir %s; name: %s " % [n.get_position(), n.dir , n.name] )
-				rpc_id(id,"addNpc", n.get_position(), n.direction, n.name)
+#	if get_tree().is_network_server():
+#		if get_node("/root/world/npc").get_child_count()>0:
+#			for n in get_node("/root/world/npc").get_children():
+#				#print("pos %s ;dir %s; name: %s " % [n.get_position(), n.dir , n.name] )
+#				rpc_id(id,"addNpc", n.get_position(), n.direction, n.name)
 	
 remotesync func update_player_stats(id ,newscore):
 	players[id]["score"] = newscore
@@ -158,54 +159,54 @@ func _server_disconnected():
 remote func unregister_player(id):
 	get_node("/root/world/players").get_node(str(id)).queue_free()
 	players.erase(id)
-	emit_signal("refreshList", players)
+#	emit_signal("refreshList", players)
 	
 #Spawn npc
-func _on_timer_timeout():
-	if get_node("/root").has_node("world"):#check if server start up
-		if get_node("/root/world/npc").get_child_count() > get_node("/root/world/players").get_child_count()+2:
-			return
-		if get_tree().is_network_server():
-			var pos = rndSpawn()
-			var dir = rndVelocity()
-			var npcName = str(pos.x).substr(5)
-#			rpc("addNpc",pos,dir,npcName)
-#			addNpc(pos,dir,npcName)
-			#FRUIT
-			pos = rndSpawn()
-			var fruit_Name = Fruit_Name()
-			var fruit_Alphbet = Fruit_Alphbet()
+#func _on_timer_timeout():
+#	if get_node("/root").has_node("world"):#check if server start up
+#		if get_node("/root/world/npc").get_child_count() > get_node("/root/world/players").get_child_count()+2:
+#			return
+#		if get_tree().is_network_server():
+#			var pos = rndSpawn()
+#			var dir = rndVelocity()
+#			var npcName = str(pos.x).substr(5)
+##			rpc("addNpc",pos,dir,npcName)
+##			addNpc(pos,dir,npcName)
+#			#FRUIT
+#			pos = rndSpawn()
+#			var fruit_Name = Fruit_Name()
+#			var fruit_Alphbet = Fruit_Alphbet()
 #			rpc("addFruit",fruit_Name, fruit_Alphbet,pos)
 #			addFruit(fruit_Name, fruit_Alphbet, pos)
-			
-remote func addNpc(pos:Vector2,dir:Vector2,npcName):
-	var npc_scene= load("res://enemy/dragon.tscn")
-	var npc = npc_scene.instance()
-	npc.set_name(npcName)
-	npc.setNpcName("D"+npcName)
-	npc.position = pos
-	npc.direction = dir
-	world.get_node("npc").add_child(npc)
-
-remote func addFruit(fruit_name, fruit_alphbet, pos:Vector2):
-	var fruit_scene = load("res://items/fruit.tscn").instance()
-	fruit_scene.get_node("Sprite").texture = load("res://images/icons/"+fruit_name+".png")
-	fruit_scene.setFruitName(fruit_alphbet)
-	fruit_scene.position = pos
-	fruit_scene.scale = Vector2(0.6, 0.6)
-	world.get_node("fruits").add_child(fruit_scene)
-	
-enum alphbet {A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
-enum fruit {banana, lemon, melon, bottle, winebottle}
-func Fruit_Name():
-	var fruit_Name = fruit.keys()[randi() %fruit.size() ]
-	return fruit_Name
-func Fruit_Alphbet():
-	var fruit_Alphbet = alphbet.keys()[randi() % alphbet.size()]
-	return fruit_Alphbet
-	
-	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	
-	pass
+#
+#remote func addNpc(pos:Vector2,dir:Vector2,npcName):
+#	var npc_scene= load("res://enemy/dragon.tscn")
+#	var npc = npc_scene.instance()
+#	npc.set_name(npcName)
+#	npc.setNpcName("D"+npcName)
+#	npc.position = pos
+#	npc.direction = dir
+#	world.get_node("npc").add_child(npc)
+#
+#remote func addFruit(fruit_name, fruit_alphbet, pos:Vector2):
+#	var fruit_scene = load("res://items/fruit.tscn").instance()
+#	fruit_scene.get_node("Sprite").texture = load("res://images/icons/"+fruit_name+".png")
+#	fruit_scene.setFruitName(fruit_alphbet)
+#	fruit_scene.position = pos
+#	fruit_scene.scale = Vector2(0.6, 0.6)
+#	world.get_node("fruits").add_child(fruit_scene)
+#
+#enum alphbet {A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z}
+#enum fruit {banana, lemon, melon, bottle, winebottle}
+#func Fruit_Name():
+#	var fruit_Name = fruit.keys()[randi() %fruit.size() ]
+#	return fruit_Name
+#func Fruit_Alphbet():
+#	var fruit_Alphbet = alphbet.keys()[randi() % alphbet.size()]
+#	return fruit_Alphbet
+#
+#
+## Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(delta):
+#
+#	pass

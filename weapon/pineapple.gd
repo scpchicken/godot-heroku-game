@@ -8,7 +8,7 @@ onready var wall_R = get_node("/root/world/wall_R").get_position()
 onready var wall_T = get_node("/root/world/wall_T").get_position()
 onready var wall_B = get_node("/root/world/wall_B").get_position()
 var from_player
-var speed = 200
+var speed = 10000
 export var dir = Vector2.ZERO
 var score = 1
 
@@ -37,7 +37,7 @@ func _on_pineapple_body_entered(body):
 		$Sprite.hide()
 		yield(get_tree().create_timer(0.5),"timeout")
 		var player=get_node("/root/world/players/"+str(from_player))
-		player.rpc("update_score",from_player,score)
+#		player.rpc("update_score",from_player,score)
 		queue_free()
 		
 		
