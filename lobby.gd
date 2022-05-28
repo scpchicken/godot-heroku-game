@@ -11,6 +11,8 @@ func restart_game(id):
 	print("at restart gamerrrrrrrrrrr   ", id)
 	$CanvasLayer/InfoPanel.show()
 	$CanvasLayer/Loading.show()
+	get_node("/root/world/winlabel").hide()
+#	$
 	
 	gamestate.gamer()
 	
