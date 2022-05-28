@@ -40,31 +40,3 @@ func _on_pineapple_body_entered(body):
 #		player.rpc("update_score",from_player,score)
 		queue_free()
 		
-		
-
-
-#func _on_pineapple_area_entered(area: Area2D):
-#		#print("area %s" % area )
-#		print("pinapple in something [%s] [%s]" % [str(area.position), str(get_node("/root/world/players/"+str(from_player)).position)])
-#		if area.is_in_group("weapon") or area.is_in_group("items") or area == get_node("/root/world/players/"+str(from_player)):
-#			print("oh no")
-#			return
-#	#if area.name != str(from_player):
-#		if area.has_method("damage") :
-#			#print("areaName %s" % area)
-#			area.callv("damage",[from_player])
-#		$".".disconnect("area_entered", $".", "_on_pineapple_area_entered")
-#		$Particles2D.emitting = true
-#		$Sprite.hide()
-#		yield(get_tree().create_timer(0.5),"timeout")
-#		var player=get_node("/root/world/players/"+str(from_player))
-#		#player.callv("update_score",[from_player,score])
-#		player.rpc("update_score",from_player,score)
-##		queue_free()
-
-
-#func _on_pineapple_area_shape_entered(area_id, area, area_shape, self_shape):
-	#print("area_id %s area %s area_shape %s self_shape %s" % [area_id,area.name,area_shape,area_shape])
-	#print(shape_owner_get_owner(shape_find_owner(area_shape)))
-	#print(shape_find_owner(area_shape))
-#	pass # Replace with function body.
