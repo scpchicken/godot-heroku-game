@@ -6,6 +6,7 @@ const FRICTION = 450
 var velocity = Vector2.ZERO
 var win_show = false
 
+signal restart
 
 #onready var animationPlayer = $Anim
 onready var animTr = $AnimTr
@@ -41,6 +42,7 @@ var qui_Char_In_Focus = false
 var gui_SendChatBt
 
 func _ready():
+	self.connect("restart", get_node("/root/lobby"), "restart_game")
 #	if is_network_master():
 #		pass
 #		wcl.add_child(_gui)
@@ -190,10 +192,20 @@ func move_state(delta):
 #func hurt_state(delta):
 #	#print("hurt_state")
 #	animState.travel("Hurt")
+remotesync func restart_game():
+#	print("ok boomer")
+	emit_signal("restart", int(self.name))
 
 puppet func winguy():
+	print("winner winer chicken dijnner")
 	get_node("/root/world/winlabel").text = "you win"
 	get_node("/root/world/winlabel").show()
+	rpc("restart_game")
+puppet func shrink():
+	print("ha ya shrink")
+	get_node("/root/world/winlabel").text = "you lose"
+	get_node("/root/world/winlabel").show()
+	rpc("restart_game")
 
 func stunned_state():
 	animState.travel("Stunned")
@@ -203,10 +215,12 @@ func bruh():
 	
 	#print("stunned_state")
 	
-	get_node("/root/world/winlabel").text = "you lose"
-	get_node("/root/world/winlabel").show()
+	
+	
 #	if !win_show:
+	rpc("shrink")
 	rpc("winguy")
+	
 #		win_show = true
 	pass
 	

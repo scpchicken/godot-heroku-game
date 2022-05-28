@@ -2,14 +2,24 @@ extends Node
 
 var ShowPanel = false
 func _ready():
+	
 #	gamestate.connect("refreshList", self, "refreshList")
 #	gamestate.connect("serverState", self, "serverState")
 	pass # Replace with function body.
 
+func restart_game(id):
+	print("at restart gamerrrrrrrrrrr   ", id)
+	$CanvasLayer/InfoPanel.show()
+	$CanvasLayer/Loading.show()
+	
+	gamestate.gamer()
+	
+
+
 func _on_join_pressed(): 
 	var new_player_name = $CanvasLayer/InfoPanel/userName.text
-	$CanvasLayer/InfoPanel/serverStart.disabled = true
-	$CanvasLayer/InfoPanel/join.disabled = true
+#	$CanvasLayer/InfoPanel/serverStart.disabled = true
+#	$CanvasLayer/InfoPanel/join.disabled = true
 #	$bg.visible = false
 	print("joining the game")
 	gamestate.join_game(new_player_name)

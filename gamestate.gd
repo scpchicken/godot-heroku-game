@@ -141,7 +141,18 @@ func add_player(id):
 remotesync func update_player_stats(id ,newscore):
 	players[id]["score"] = newscore
 	#print("update_player_stats:",players)
-	
+
+func gamer():
+#	if get_tree().is_network_server():
+		#print("_player_disconnected :",id)
+	for p_id in players:
+		for id in players:
+			
+#		if p_id != id  && p_id != 1:
+			rpc_id(p_id,"unregister_player",id)
+	players = {}
+#		unregister_player(p_id)
+
 func _player_disconnected(id):
 	if get_tree().is_network_server():
 		#print("_player_disconnected :",id)
@@ -157,8 +168,12 @@ func _server_disconnected():
 	get_tree().get_root().queue_free()
 
 remote func unregister_player(id):
-	get_node("/root/world/players").get_node(str(id)).queue_free()
-	players.erase(id)
+#	if get_node("/root/world/players").
+	var noder = get_node("/root/world/players").get_node_or_null(str(id))
+	
+	if noder != null:
+		noder.queue_free()
+#	players.erase(id)
 #	emit_signal("refreshList", players)
 	
 #Spawn npc
